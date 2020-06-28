@@ -1,5 +1,3 @@
-# starting point: https://flowingdata.com/2009/11/12/how-to-make-a-us-county-thematic-map-using-free-tools/
-
 import sys
 import csv
 import math
@@ -23,11 +21,12 @@ for row in reader:
 		pass
 
 # Read in case/death numbers
-# https://raw.githubusercontent.com/nytimes/covid-19-data/master/us-counties.csv
 alldates = {}
 reader = csv.reader(open('us-counties.csv'), delimiter=",")
+#reader = csv.reader(open('6-20-2020.txt'), delimiter=",")
 
 next(reader)	# not the header
+
 
  # 2020-06-20,Autauga,Alabama,01001,431,9
 
@@ -119,6 +118,20 @@ for csvdate in alldates:
 			color = 'rgb(' + str(red) + '%,' + str(green) + '%,' + str(blue) + '%);'
 								
 			p['style'] = path_style + color
+
+# adding a new text tag at the end of the <svg> tag
+#		<text x="350" y="340" fill="rgb(100,100,140)" font-size="1em" font-family="Arial, Helvetica, sans-serif">June 24, 2020</text>
+
+	datetag = soup.new_tag("text")
+	datetag['x'] = 350 # lower right
+	datetag['y'] = 340
+	datetag['style'] = 'fill:rgb(100,100,140); font-size:1em; font-family:Arial, Helvetica, sans-serif;'
+	soup.svg.append(datetag)
+
+	svgdate = datetime.datetime.strptime(str(csvdate), '%j')
+	svgdatestring = svgdate.strftime('%B %-d, 2020')
+
+	datetag.string = svgdatestring
 
 	mapfile = str(csvdate).zfill(3) + "_map.svg"
 	with open(mapfile, 'w') as f:
